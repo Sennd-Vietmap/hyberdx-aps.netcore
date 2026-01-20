@@ -2,8 +2,11 @@ version: '3.8'
 
 services:
   clickstack-observability:
-    image: hyperdx/hyperdx-all-in-one:latest
+    image: docker.hyperdx.io/hyperdx/hyperdx-all-in-one:latest
     container_name: clickstack-hyperdx
+    hostname: clickstack-observability
+    networks:
+      - clickstack-net
     # multi-platform support validation
     platform: linux/amd64
     ports:
@@ -11,13 +14,30 @@ services:
       - "4317:4317" # OTLP gRPC Ingestion
       - "4318:4318" # OTLP HTTP Ingestion
       - "8123:8123" # ClickHouse HTTP
-    environment:
-      - NODE_ENV=development
+    #environment:
+      #- NODE_ENV=development
     volumes:
       - hyperdx_clickhouse_data:/var/lib/clickhouse
       - hyperdx_user_data:/etc/hyperdx
     restart: unless-stopped
 
+  nginx-proxy:
+    image: nginx:latest
+    container_name: clickstack-nginx
+    networks:
+      - clickstack-net
+    ports:
+      - "8686:80" # Custom port forwarding to HyperDX UI
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - clickstack-observability
+    restart: always
+
 volumes:
   hyperdx_clickhouse_data:
   hyperdx_user_data:
+
+networks:
+  clickstack-net:
+    driver: bridge

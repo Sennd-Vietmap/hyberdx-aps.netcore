@@ -5,3 +5,5 @@
 - [x] **Task 3**: Implement `OpenTelemetry` wiring (Traces, Metrics, Logs). <!-- id: 2 -->
 - [x] **Task 4**: Create `TrafficGenerator` service for demo data. <!-- id: 3 -->
 - [x] **Task 5**: Documentation & Verification. <!-- id: 4 -->
+- [x] **Task 6**: Add Nginx Reverse Proxy for HyperDX UI (Port 8686). <!-- id: 5 -->
+- [x] **Task 7**: Instrument API with HyperDX API Key Authentication. <!-- id: 6 -->

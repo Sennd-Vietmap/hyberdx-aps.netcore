@@ -18,18 +18,19 @@ Depending on your hardware, this might take a moment to pull images and start.
 docker compose up -d
 ```
 > **Note**: This starts the "All-in-One" HyperDX stack.
-> - **UI**: http://localhost:8080
+> - **Direct UI**: http://localhost:8080
+> - **Nginx Proxy UI**: http://localhost:8686
 > - **OTLP Collector**: http://localhost:4318 (HTTP), 4317 (gRPC)
 
 ### 2. Run the Application
-The application includes a `TrafficGeneratorService` that will automatically start simulating traffic and errors once the app is running.
+The application includes a `TrafficGeneratorService` that will automatically start simulating traffic and errors once the app is running. It uses the HyperDX API Key for authenticated OTLP ingestion.
 
 ```powershell
 dotnet run --project ClickStack.Api
 ```
 
 ### 3. Verify in HyperDX
-1. Open [http://localhost:8080](http://localhost:8080).
+1. Open [http://localhost:8686](http://localhost:8686) (via Nginx proxy).
 2. Create an account (local instance).
 3. Connect the data set (it should auto-detect OTel signals).
 4. Go to **Logs** or **Traces** to see the `weatherforecast` calls.
@@ -38,6 +39,8 @@ dotnet run --project ClickStack.Api
 
 ## Architecture
 - **Program.cs**: Registers `TrafficGeneratorService` and `AddClickStackConnect`.
-- **Extensions/ClickStackExtensions.cs**: Centralized OTel configuration.
+- **Extensions/ClickStackExtensions.cs**: Centralized OTel configuration with `authorization` header support.
 - **Services/TrafficGeneratorService.cs**: Background worker that hits the API to generate traces.
+- **nginx/nginx.conf**: Reverse proxy configuration for port 8686.
+- **appsettings.json**: Stores the `ClickStack:ApiKey` for authentication.
 

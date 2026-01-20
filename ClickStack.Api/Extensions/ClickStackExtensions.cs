@@ -11,6 +11,7 @@ public static class ClickStackExtensions
     {
         var serviceName = "clickstack-demo-api";
         var otelEndpoint = builder.Configuration["ClickStack:OtelEndpoint"] ?? "http://localhost:4317";
+        var apiKey = builder.Configuration["ClickStack:ApiKey"];
 
         // Define the resource (service identification)
         var resourceBuilder = ResourceBuilder.CreateDefault()
@@ -30,6 +31,10 @@ public static class ClickStackExtensions
             options.AddOtlpExporter(otlpOptions =>
             {
                 otlpOptions.Endpoint = new Uri(otelEndpoint);
+                if (!string.IsNullOrEmpty(apiKey))
+                {
+                    otlpOptions.Headers = $"authorization={apiKey}";
+                }
             });
         });
 
@@ -44,6 +49,10 @@ public static class ClickStackExtensions
                     .AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(otelEndpoint);
+                        if (!string.IsNullOrEmpty(apiKey))
+                        {
+                            otlpOptions.Headers = $"authorization={apiKey}";
+                        }
                     });
             })
         // 3. Tracing
@@ -56,6 +65,10 @@ public static class ClickStackExtensions
                     .AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(otelEndpoint);
+                        if (!string.IsNullOrEmpty(apiKey))
+                        {
+                            otlpOptions.Headers = $"authorization={apiKey}";
+                        }
                     });
             });
 
