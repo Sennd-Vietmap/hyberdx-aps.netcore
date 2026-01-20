@@ -8,3 +8,4 @@
 - [x] **Task 6**: Add Nginx Reverse Proxy for HyperDX UI (Port 8686). <!-- id: 5 -->
 - [x] **Task 7**: Instrument API with HyperDX API Key Authentication. <!-- id: 6 -->
 - [x] **Task 8**: Create HyperDX Step-by-Step Guide for Monitoring. <!-- id: 7 -->
+- [x] **Task 9**: Document OpenTelemetry Attributes & Semantic Conventions. <!-- id: 8 -->
