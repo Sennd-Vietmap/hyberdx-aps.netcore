@@ -9,3 +9,4 @@
 - [x] **Task 7**: Instrument API with HyperDX API Key Authentication. <!-- id: 6 -->
 - [x] **Task 8**: Create HyperDX Step-by-Step Guide for Monitoring. <!-- id: 7 -->
 - [x] **Task 9**: Document OpenTelemetry Attributes & Semantic Conventions. <!-- id: 8 -->
+- [x] **Task 10**: Create Advanced HyperDX Dashboards Guide (Account ID & Comparison). <!-- id: 9 -->

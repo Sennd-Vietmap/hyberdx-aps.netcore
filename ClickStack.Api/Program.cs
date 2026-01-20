@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using ClickStack.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,29 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Middleware to extract Account ID for Observability
+app.Use(async (context, next) =>
+{
+    var accountId = context.Request.Headers["X-Account-Id"].ToString();
+    if (!string.IsNullOrEmpty(accountId))
+    {
+        // Add to Trace (Activity)
+        var activity = Activity.Current;
+        activity?.SetTag("app.account_id", accountId);
+
+        // Add to Logs (using ILogger scope)
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        using (logger.BeginScope(new Dictionary<string, object> { ["app.account_id"] = accountId }))
+        {
+            await next();
+        }
+    }
+    else
+    {
+        await next();
+    }
+});
 
 var summaries = new[]
 {

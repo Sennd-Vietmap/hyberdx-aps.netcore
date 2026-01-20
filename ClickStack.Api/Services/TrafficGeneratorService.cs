@@ -36,11 +36,16 @@ public class TrafficGeneratorService : BackgroundService
                 activity?.SetTag("simulation.iteration", DateTime.UtcNow.Ticks);
                 _logger.LogInformation("Simulating background processing job...");
 
-                // 1. Simulate HTTP Traffic (which creates its own traces automaticall via OTel HttpClient instrumentation)
+                // 1. Simulate HTTP Traffic
                 try 
                 {
-                    var response = await client.GetAsync(targetUrl, stoppingToken);
+                    var accountId = $"ACC-{_random.Next(100, 105)}"; // Simulate 5 different accounts
+                    var request = new HttpRequestMessage(HttpMethod.Get, targetUrl);
+                    request.Headers.Add("X-Account-Id", accountId);
+                    
+                    var response = await client.SendAsync(request, stoppingToken);
                     activity?.SetTag("http.status_code", (int)response.StatusCode);
+                    activity?.SetTag("app.account_id", accountId);
                 }
                 catch(Exception httpEx)
                 {
