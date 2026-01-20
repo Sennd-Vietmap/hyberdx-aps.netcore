@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  clickstack-observability:
+    image: hyperdx/hyperdx-all-in-one:latest
+    container_name: clickstack-hyperdx
+    # multi-platform support validation
+    platform: linux/amd64
+    ports:
+      - "8080:8080" # HyperDX UI
+      - "4317:4317" # OTLP gRPC Ingestion
+      - "4318:4318" # OTLP HTTP Ingestion
+      - "8123:8123" # ClickHouse HTTP
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - hyperdx_clickhouse_data:/var/lib/clickhouse
+      - hyperdx_user_data:/etc/hyperdx
+    restart: unless-stopped
+
+volumes:
+  hyperdx_clickhouse_data:
+  hyperdx_user_data:
