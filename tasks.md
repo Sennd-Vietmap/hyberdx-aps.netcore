@@ -11,3 +11,4 @@
 - [x] **Task 9**: Document OpenTelemetry Attributes & Semantic Conventions. <!-- id: 8 -->
 - [x] **Task 10**: Create Advanced HyperDX Dashboards Guide (Account ID & Comparison). <!-- id: 9 -->
 - [x] **Task 11**: Create HyperDX Alerting Guide (Log & Metric Alerts). <!-- id: 10 -->
+- [x] **Task 12**: Create HyperDX APM Guide (Services, Traces, and Service Maps). <!-- id: 11 -->
