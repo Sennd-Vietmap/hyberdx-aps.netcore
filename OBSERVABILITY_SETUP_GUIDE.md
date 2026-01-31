@@ -11,9 +11,9 @@ Think of **Docker Compose** as a "Recipe" for your entire system. Instead of sta
 
 #### A. Services (The Workers)
 Each `service` is like a mini-server (container) running one specific task:
-- **`clickstack-observability` (HyperDX)**: This is the "Brain." It collects all the data (logs, traces, metrics) and shows it to you in a nice dashboard.
-- **`nginx-proxy`**: This is the "Front Door." It takes requests from your browser and sends them to the HyperDX UI.
-- **`otel-collector`**: This is the "Post Office." It receives data from your API and Nginx, organizes it, and sends it to the Brain (HyperDX).
+- **`clickstack-observability` (ClickStack)**: This is the "Brain." It collects all the data (logs, traces, metrics) and shows it to you in a nice dashboard. It's powered by the official `clickhouse/clickstack-all-in-one` image.
+- **`nginx-proxy`**: This is the "Front Door." It takes requests from your browser and sends them to the ClickStack UI.
+- **`otel-collector`**: This is the "Post Office." It receives data from your API and Nginx, organizes it, and sends it to the Brain (ClickStack).
 
 #### B. Ports (The Windows)
 - `"8080:8080"`: Maps your computer's port (left) to the container's port (right). This is how you access the UI at `localhost:8080`.

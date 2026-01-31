@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   clickstack-observability:
-    image: docker.hyperdx.io/hyperdx/hyperdx-all-in-one:latest
+    image: clickhouse/clickstack-all-in-one:latest
     container_name: clickstack-hyperdx
     hostname: clickstack-observability
     networks:
@@ -16,7 +16,8 @@ services:
       #- NODE_ENV=development
     volumes:
       - hyperdx_clickhouse_data:/var/lib/clickhouse
-      - hyperdx_user_data:/etc/hyperdx
+      - hyperdx_user_data:/data/db
+      - hyperdx_clickhouse_logs:/var/log/clickhouse-server
     restart: unless-stopped
 
   nginx-proxy:
@@ -52,6 +53,7 @@ services:
 volumes:
   hyperdx_clickhouse_data:
   hyperdx_user_data:
+  hyperdx_clickhouse_logs:
   nginx_logs:
 
 networks:

@@ -30,7 +30,27 @@
     - [x] Create `OBSERVABILITY_SETUP_GUIDE.md` for beginners
     - [x] Notify user
 
+- [x] Aligning Project with Official ClickStack Docs
+    - [x] Research official ClickStack documentation
+    - [x] Create implementation plan
+    - [x] Update `docker-compose.yml` with new images and volumes
+    - [x] Update documentation to reflect official naming
+    - [x] Verify functionality with new stack
+
+- [x] Planning NuGet Package for ClickStack Integration
+    - [x] Analyze current integration logic (extensions, middleware)
+    - [x] Design NuGet package API and configuration options
+    - [x] Create implementation plan for the class library
+    - [x] Verifying plan with user
+    - [x] Create the new Library project
+    - [x] Move logic and refactor demo API
+
 - [x] Researching HyperDX Dashboard Templates
     - [x] Search for community and official templates
     - [x] Create `HYPERDX_DASHBOARD_TEMPLATES.md` guide
+    - [x] Notify user
+
+- [x] Defining Project Roadmap
+    - [x] Research ClickStack/HyperDX future features
+    - [x] Create `ROADMAP.md` guide
     - [x] Notify user

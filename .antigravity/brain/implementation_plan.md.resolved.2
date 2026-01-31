@@ -1,0 +1,42 @@
+# Update Project based on ClickStack Documentation
+
+This plan outlines the updates required to align the project with the official [ClickHouse ClickStack](https://clickhouse.com/docs/use-cases/observability/clickstack) documentation.
+
+## User Review Required
+
+> [!IMPORTANT]
+> We will be switching the Docker image from the HyperDX-branded image to the official ClickHouse ClickStack image. This is a significant change but ensures compatibility with the latest ClickHouse features.
+
+## Proposed Changes
+
+### Docker Configuration
+
+#### [MODIFY] [docker-compose.yml](file:///d:/study/google-antigravity/clickstack-aspnet/docker-compose.yml)
+- Update `clickstack-observability` image to `clickhouse/clickstack-all-in-one:latest`.
+- Update volume mounts to include `/data/db` for persistence as recommended by docs.
+- Use `OTEL_EXPORTER_OTLP_HEADERS` style if configuring from the host, but we will mostly rely on the Collector gateway.
+
+### OTel Collector Configuration
+
+#### [MODIFY] [otel-collector-config.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/otel-collector-config.yaml)
+- Align the `otlphttp` exporter with official examples if needed (currently it points to `clickstack-hyperdx:4318`, which remains valid within the network).
+- Ensure `service.name` logic is robust for the new stack.
+
+### Documentation Updates
+
+#### [MODIFY] [README.md](file:///d:/study/google-antigravity/clickstack-aspnet/README.md)
+- Update mentions of "HyperDX stack" to "ClickStack (Official ClickHouse Observability)".
+- Update image naming conventions.
+- Link to the official ClickStack documentation.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- None.
+
+### Manual Verification
+1.  **Restart Services**: `docker-compose down && docker-compose up -d --build`.
+2.  **Verify UI**: Ensure the UI is still accessible at `http://localhost:8080`.
+3.  **Verify Ingestion**: Run the API and check that logs, metrics, and traces are still appearing in the UI under the new stack.

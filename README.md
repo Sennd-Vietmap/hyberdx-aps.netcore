@@ -1,9 +1,9 @@
-# ClickStack Demo: HyperDX + OpenTelemetry + ClickHouse on .NET
+# ClickStack Demo: Official ClickHouse Observability on .NET
 
-This repository demonstrates a full observability stack using:
+This repository demonstrates a production-grade observability stack using:
 - **Application**: ASP.NET Core Web API 8/9
 - **Instrumentation**: OpenTelemetry (Logs, Metrics, Traces)
-- **Backend/UI**: HyperDX (Open Source)
+- **Stack**: [ClickStack](https://clickhouse.com/docs/use-cases/observability/clickstack) (Official ClickHouse Observability)
 - **Data Store**: ClickHouse
 
 ## Prerequisites
@@ -13,14 +13,14 @@ This repository demonstrates a full observability stack using:
 ## Getting Started
 
 ### 1. Start the Infrastructure
-Depending on your hardware, this might take a moment to pull images and start.
+Depending on your hardware, this might take a moment to pull the official `clickhouse/clickstack-*` images and start.
 ```powershell
 docker compose up -d
 ```
-> **Note**: This starts the "All-in-One" HyperDX stack.
+> **Note**: This starts the **ClickStack "All-in-One"** stack.
 > - **Direct UI**: http://localhost:8080
 > - **Nginx Proxy UI**: http://localhost:8686
-> - **OTLP Collector**: http://localhost:4318 (HTTP), 4317 (gRPC)
+> - **Central OTel Collector**: http://localhost:4318 (HTTP), 4317 (gRPC)
 
 ### 2. Run the Application
 The application includes a `TrafficGeneratorService` that will automatically start simulating traffic and errors once the app is running. It uses the HyperDX API Key for authenticated OTLP ingestion.

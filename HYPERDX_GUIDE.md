@@ -1,9 +1,9 @@
-# HyperDX Observability Guide
+# ClickStack (HyperDX) Observability Guide
 
-This guide provides step-by-step instructions for exploring your telemetry data and setting up monitoring dashboards in HyperDX.
+This guide provides step-by-step instructions for exploring your telemetry data and setting up monitoring dashboards in the ClickStack (powered by HyperDX) environment.
 
 ## 1. Viewing Logs
-HyperDX aggregates logs from your .NET API via the OpenTelemetry collector.
+The ClickStack environment aggregates logs from your .NET API via the OpenTelemetry collector.
 
 1.  Open the HyperDX UI at [http://localhost:8686](http://localhost:8686).
 2.  Navigate to the **Search** (Magnifying glass) tab.

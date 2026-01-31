@@ -1,5 +1,6 @@
 {
   "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary": "Implementation plan to collect Nginx logs and transform them into OpenTelemetry metrics and traces using an OTel Collector sidecar.",
-  "updatedAt": "2026-01-29T12:56:23.166791700Z"
+  "summary": "Implementation plan to create a reusable NuGet package for ClickStack integration in ASP.NET Core applications.",
+  "updatedAt": "2026-01-31T15:15:44.243888100Z",
+  "version": "3"
 }

@@ -43,14 +43,9 @@
     - [x] Create implementation plan for the class library
     - [x] Verifying plan with user
     - [x] Create the new Library project
-    - [x] Move logic and refactor demo API
+    - [/] Move logic and refactor demo API
 
 - [x] Researching HyperDX Dashboard Templates
     - [x] Search for community and official templates
     - [x] Create [HYPERDX_DASHBOARD_TEMPLATES.md](file:///d:/study/google-antigravity/clickstack-aspnet/HYPERDX_DASHBOARD_TEMPLATES.md) guide
-    - [x] Notify user
-
-- [x] Defining Project Roadmap
-    - [x] Research ClickStack/HyperDX future features
-    - [x] Create [ROADMAP.md](file:///d:/study/google-antigravity/clickstack-aspnet/ROADMAP.md) guide
     - [x] Notify user

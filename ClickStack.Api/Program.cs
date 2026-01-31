@@ -1,10 +1,13 @@
-using System.Diagnostics;
-using ClickStack.Api.Extensions;
+using ClickHouse.ClickStack.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add ClickStack (OpenTelemetry) Observability
-builder.AddClickStackConnect();
+builder.AddClickStack(options =>
+{
+    options.ServiceName = "clickstack-demo-api";
+    options.AdditionalSources.Add("ClickStack.TrafficGenerator");
+});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,28 +27,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Middleware to extract Account ID for Observability
-app.Use(async (context, next) =>
-{
-    var accountId = context.Request.Headers["X-Account-Id"].ToString();
-    if (!string.IsNullOrEmpty(accountId))
-    {
-        // Add to Trace (Activity)
-        var activity = Activity.Current;
-        activity?.SetTag("app.account_id", accountId);
-
-        // Add to Logs (using ILogger scope)
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        using (logger.BeginScope(new Dictionary<string, object> { ["app.account_id"] = accountId }))
-        {
-            await next();
-        }
-    }
-    else
-    {
-        await next();
-    }
-});
+// Enable ClickStack Middleware (Account Tracking, etc.)
+app.UseClickStack();
 
 var summaries = new[]
 {

@@ -1,38 +1,64 @@
-# ASP.NET API Telemetry Routing through OTel Collector
+# NuGet Package Plan: ClickHouse.ClickStack.AspNetCore
 
-This plan describes how to route all telemetry (logs, metrics, traces) from the ASP.NET API through the OpenTelemetry Collector before it reaches HyperDX.
+This plan outlines the creation of a reusable NuGet package to simplify the integration of ClickStack (OpenTelemetry + ClickHouse) into ASP.NET Core applications.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> To route traffic through the collector, we will move the host port mappings (4317, 4318) from the HyperDX container to the OTel Collector container. This ensures that any application sending to `localhost:4317` (the default) will now hit the collector.
+> The primary goal is to move the logic from the current `ClickStack.Api` project into a dedicated library. This will allow other projects to use the same observability patterns easily.
 
 ## Proposed Changes
 
-### OpenTelemetry Collector
+### New Class Library: `ClickHouse.ClickStack.AspNetCore`
 
-#### [MODIFY] [otel-collector-config.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/otel-collector-config.yaml)
-- Add the `otlp` receiver for both gRPC and HTTP.
-- Update `service.pipelines` to include `otlp` in `logs`, `metrics`, and `traces`.
-- Ensure the `otlp` exporter is configured for all three signals.
+#### [NEW] [ClickStackOptions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ClickStackOptions.cs)
+Define a configuration class to hold the endpoint, API key, and other settings.
+```csharp
+public class ClickStackOptions
+{
+    public string ServiceName { get; set; } = "unknown-service";
+    public string ServiceVersion { get; set; } = "1.0.0";
+    public string OtelEndpoint { get; set; } = "http://localhost:4317";
+    public string? ApiKey { get; set; }
+    public bool EnableAccountTracking { get; set; } = true;
+    public string AccountHeaderName { get; set; } = "X-Account-Id";
+}
+```
 
-### Infrastructure
+#### [NEW] [ServiceCollectionExtensions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ServiceCollectionExtensions.cs)
+Provide extension methods for `IServiceCollection` or `IHostApplicationBuilder`.
+- `AddClickStack()`: Configures OTel logging, metrics, and tracing.
 
-#### [MODIFY] [docker-compose.yml](file:///d:/study/google-antigravity/clickstack-aspnet/docker-compose.yml)
-- **clickstack-observability**: Remove `4317:4317` and `4318:4318` ports. The collector will handle these on the host.
-- **otel-collector**: Add `4317:4317` and `4318:4318` ports to listen for incoming telemetry from the host-bound API.
+#### [NEW] [ApplicationBuilderExtensions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ApplicationBuilderExtensions.cs)
+Provide extension methods for `IApplicationBuilder` to register the middleware.
+- `UseClickStack()`: Adds the Account ID tracking middleware.
+
+### Refactoring `ClickStack.Api`
+
+#### [MODIFY] [ClickStack.Api.csproj](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/ClickStack.Api.csproj)
+- Add a reference to the new library.
+- Remove redundant OpenTelemetry packages if they are now transitive dependencies.
+
+#### [MODIFY] [Program.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Program.cs)
+- Replace local middleware and extensions with library calls.
+```csharp
+builder.AddClickStack(options => {
+    options.ServiceName = "clickstack-demo-api";
+});
+// ...
+app.UseClickStack();
+```
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- None.
+- Create a unit test project `ClickHouse.ClickStack.AspNetCore.Tests`.
+- Verify that `AddClickStack` correctly registers OTel services.
+- Verify that the middleware correctly sets tags.
 
 ### Manual Verification
-1.  **Restart Services**: `docker-compose up -d`.
-2.  **Run API**: `dotnet run --project ClickStack.Api`.
-3.  **Check Collector Logs**: `docker logs clickstack-otel-collector` to see spans/logs being received via OTLP.
-4.  **HyperDX UI**:
-    - Verify that `clickstack-demo-api` data still appears in Logs, Metrics, and Traces tabs.
-    - Verify that the path of the data is now `API -> Collector -> HyperDX`.
+1. Build the library.
+2. Reference it from the demo API.
+3. Run the stack and verify that telemetry is still arriving at `http://localhost:8080`.
