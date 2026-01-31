@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickstack-observability
+  labels:
+    app: clickstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clickstack
+  template:
+    metadata:
+      labels:
+        app: clickstack
+    spec:
+      containers:
+      - name: clickstack
+        image: clickhouse/clickstack-all-in-one:latest
+        ports:
+        - containerPort: 8080 # UI
+        - containerPort: 8123 # ClickHouse HTTP
+        volumeMounts:
+        - name: clickhouse-data
+          mountPath: /var/lib/clickhouse
+        - name: user-data
+          mountPath: /data/db
+        - name: clickhouse-logs
+          mountPath: /var/log/clickhouse-server
+      volumes:
+      - name: clickhouse-data
+        persistentVolumeClaim:
+          claimName: clickstack-ch-data-pvc
+      - name: user-data
+        persistentVolumeClaim:
+          claimName: clickstack-user-data-pvc
+      - name: clickhouse-logs
+        persistentVolumeClaim:
+          claimName: clickstack-ch-logs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clickstack
+spec:
+  selector:
+    app: clickstack
+  ports:
+  - name: ui
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+  - name: clickhouse
+    protocol: TCP
+    port: 8123
+    targetPort: 8123
+  type: LoadBalancer

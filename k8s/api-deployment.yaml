@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickstack-demo-api
+  labels:
+    app: clickstack-demo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clickstack-demo-api
+  template:
+    metadata:
+      labels:
+        app: clickstack-demo-api
+    spec:
+      containers:
+      - name: api
+        image: your-registry/clickstack-demo-api:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ClickStack__OtelEndpoint
+          value: "http://otel-collector:4317"
+        - name: ClickStack__ApiKey
+          valueFrom:
+            secretKeyRef:
+              name: clickstack-secrets
+              key: api-key
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clickstack-demo-api
+spec:
+  selector:
+    app: clickstack-demo-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP

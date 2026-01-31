@@ -28,6 +28,12 @@ receivers:
         from: attributes.body_bytes_sent
         to: attributes["http.response.body.size"]
 
+  # Monitor ClickHouse health
+  clickhouse:
+    endpoint: "http://clickstack-hyperdx:8123"
+    username: "default"
+    password: ""
+
 processors:
   batch:
   
@@ -50,7 +56,7 @@ service:
       processors: [batch, transform]
       exporters: [otlphttp]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, clickhouse]
       processors: [batch]
       exporters: [otlphttp]
     traces:

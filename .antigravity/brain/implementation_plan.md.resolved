@@ -1,64 +1,37 @@
-# NuGet Package Plan: ClickHouse.ClickStack.AspNetCore
+# Phase 4: Full Stack Visibility
 
-This plan outlines the creation of a reusable NuGet package to simplify the integration of ClickStack (OpenTelemetry + ClickHouse) into ASP.NET Core applications.
+This final phase completes the observability loop by adding visibility into the infrastructure (ClickHouse) and deep application performance (Profiling).
 
 ## User Review Required
 
 > [!IMPORTANT]
-> The primary goal is to move the logic from the current `ClickStack.Api` project into a dedicated library. This will allow other projects to use the same observability patterns easily.
+> To monitor ClickHouse, we will use the `clickhouse` receiver in the OTel Collector. This requires the collector to have network access to the ClickHouse port (8123).
 
 ## Proposed Changes
 
-### New Class Library: `ClickHouse.ClickStack.AspNetCore`
+### 1. Database Observability (ClickHouse)
 
-#### [NEW] [ClickStackOptions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ClickStackOptions.cs)
-Define a configuration class to hold the endpoint, API key, and other settings.
-```csharp
-public class ClickStackOptions
-{
-    public string ServiceName { get; set; } = "unknown-service";
-    public string ServiceVersion { get; set; } = "1.0.0";
-    public string OtelEndpoint { get; set; } = "http://localhost:4317";
-    public string? ApiKey { get; set; }
-    public bool EnableAccountTracking { get; set; } = true;
-    public string AccountHeaderName { get; set; } = "X-Account-Id";
-}
-```
+#### [MODIFY] [otel-collector-config.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/otel-collector-config.yaml)
+- Add the `clickhouse` receiver.
+- Configure it to point to `clickstack-observability:8123`.
+- Update the metrics pipeline to include this receiver.
 
-#### [NEW] [ServiceCollectionExtensions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ServiceCollectionExtensions.cs)
-Provide extension methods for `IServiceCollection` or `IHostApplicationBuilder`.
-- [AddClickStack()](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Extensions/ClickStackExtensions.cs#10-77): Configures OTel logging, metrics, and tracing.
+### 2. Continuous Profiling & RUM Guides
 
-#### [NEW] [ApplicationBuilderExtensions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ApplicationBuilderExtensions.cs)
-Provide extension methods for `IApplicationBuilder` to register the middleware.
-- `UseClickStack()`: Adds the Account ID tracking middleware.
+#### [NEW] [PROFILING_GUIDE.md](file:///d:/study/google-antigravity/clickstack-aspnet/PROFILING_GUIDE.md)
+Explain how to use **OpenTelemetry DotNet Profiling** (experimental/contribution) to identify CPU and Memory bottlenecks at the line-of-code level.
 
-### Refactoring `ClickStack.Api`
-
-#### [MODIFY] [ClickStack.Api.csproj](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/ClickStack.Api.csproj)
-- Add a reference to the new library.
-- Remove redundant OpenTelemetry packages if they are now transitive dependencies.
-
-#### [MODIFY] [Program.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Program.cs)
-- Replace local middleware and extensions with library calls.
-```csharp
-builder.AddClickStack(options => {
-    options.ServiceName = "clickstack-demo-api";
-});
-// ...
-app.UseClickStack();
-```
+#### [NEW] [FRONTEND_RUM_GUIDE.md](file:///d:/study/google-antigravity/clickstack-aspnet/FRONTEND_RUM_GUIDE.md)
+Provide a step-by-step template for adding the **HyperDX Browser SDK** to a React or Next.js application, including session replay and correlation with backend traces.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- Create a unit test project `ClickHouse.ClickStack.AspNetCore.Tests`.
-- Verify that [AddClickStack](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Extensions/ClickStackExtensions.cs#10-77) correctly registers OTel services.
-- Verify that the middleware correctly sets tags.
+- None.
 
 ### Manual Verification
-1. Build the library.
-2. Reference it from the demo API.
-3. Run the stack and verify that telemetry is still arriving at `http://localhost:8080`.
+1. **Collector Logs**: Verify that the OTel Collector successfully connects to the ClickHouse endpoint.
+2. **Metric Verification**: Check HyperDX for ClickHouse-specific metrics like `clickhouse.query.count` or `clickhouse.table.size`.
+3. **Guide Review**: Ensure the RUM and Profiling guides are actionable and up-to-date with OTel standards.

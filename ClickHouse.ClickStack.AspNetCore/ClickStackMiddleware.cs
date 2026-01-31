@@ -25,7 +25,12 @@ public class ClickStackMiddleware
             if (!string.IsNullOrEmpty(accountId))
             {
                 // 1. Add to Trace (Activity)
-                Activity.Current?.SetTag("app.account_id", accountId);
+                var activity = Activity.Current;
+                activity?.SetTag("app.account_id", accountId);
+                activity?.AddEvent(new ActivityEvent("request.account_id_extracted", tags: new ActivityTagsCollection
+                {
+                    ["account.id"] = accountId
+                }));
 
                 // 2. Add to Logs (using ILogger scope)
                 using (_logger.BeginScope(new Dictionary<string, object> { ["app.account_id"] = accountId }))

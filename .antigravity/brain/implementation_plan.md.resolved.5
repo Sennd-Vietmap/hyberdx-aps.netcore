@@ -1,0 +1,44 @@
+# Phase 2: Production Readiness
+
+This plan outlines the steps to transition the project towards production-grade infrastructure and security.
+
+## User Review Required
+
+> [!WARNING]
+> Moving to Kubernetes is a significant infrastructure shift. We will provide YAML manifests for a standard deployment, but local testing will require `minikube`, `kind`, or Docker Desktop Kubernetes enabled.
+
+## Proposed Changes
+
+### 1. Kubernetes Manifests
+
+#### [NEW] [k8s/api-deployment.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/k8s/api-deployment.yaml)
+Define the API deployment with OTel Collector sidecar pattern or reference to a central collector.
+
+#### [NEW] [k8s/otel-collector.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/k8s/otel-collector.yaml)
+Configure the OTel Collector as a Kubernetes Deployment or DaemonSet to receive cluster metrics and application logs.
+
+#### [NEW] [k8s/clickstack.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/k8s/clickstack.yaml)
+Deploy the ClickStack (All-in-One for now, or Split for production) with persistent volume claims.
+
+### 2. Ingestion Security
+
+#### [MODIFY] [ClickHouse.ClickStack.AspNetCore\ClickStackOptions.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ClickStackOptions.cs)
+- Add support for loading the API Key from **Kubernetes Secrets**.
+- Implement optional **HTTPS** support for OTLP ingestion.
+
+### 3. Documentation
+
+#### [NEW] [PRODUCTION_SETUP_GUIDE.md](file:///d:/study/google-antigravity/clickstack-aspnet/PRODUCTION_SETUP_GUIDE.md)
+A comprehensive guide for SREs on how to deploy, scale, and secure the stack in a production environment.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- None.
+
+### Manual Verification
+1. **Lint Manifests**: Use `kubectl apply --dry-run=client` to verify YAML syntax.
+2. **Local K8s Test**: (Optional if user has K8s ready) Deploy to a local namespace and verify signal flow.
+3. **Security Check**: Verify that the API Key is correctly masked or loaded via environment variables in the pod spec.

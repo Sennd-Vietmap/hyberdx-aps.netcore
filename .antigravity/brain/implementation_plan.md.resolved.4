@@ -1,0 +1,47 @@
+# Phase 1: Advanced Observability Features
+
+This plan outlines the implementation of Service Maps and Custom Span Events to enrich the observability data in ClickStack.
+
+## User Review Required
+
+> [!NOTE]
+> We will be adding a simulated database repository to demonstrate how ClickStack visualizes downstream dependencies (Service Maps).
+
+## Proposed Changes
+
+### 1. Database Dependency Simulation (Service Maps)
+
+#### [NEW] [WeatherRepository.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Repositories/WeatherRepository.cs)
+Create a repository that simulates a database call using standard OpenTelemetry `db` attributes. This will make a "Database" node appear in the Service Map.
+
+#### [MODIFY] [Program.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Program.cs)
+- Register `IWeatherRepository`.
+- Inject and use it in the `/weatherforecast` endpoint.
+
+### 2. Custom Span Events (Milestones)
+
+#### [MODIFY] [WeatherRepository.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Repositories/WeatherRepository.cs)
+Add span events like `db.query.execution_started` and `db.data_retrieved` to demonstrate business milestones within a trace.
+
+#### [MODIFY] [ClickStackMiddleware.cs](file:///d:/study/google-antigravity/clickstack-aspnet/ClickHouse.ClickStack.AspNetCore/ClickStackMiddleware.cs)
+Add a span event `request.account_id_extracted` to show when the middleware identifies the user.
+
+### 3. Library Enhancements (Optional/Transitive)
+Ensure the `ClickHouse.ClickStack.AspNetCore` library supports common OTel conventions. (Currently, it already supports custom sources).
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- None.
+
+### Manual Verification
+1.  **Run Application**: `dotnet run --project ClickStack.Api`.
+2.  **Generate Traffic**: Let the [TrafficGeneratorService](file:///d:/study/google-antigravity/clickstack-aspnet/ClickStack.Api/Services/TrafficGeneratorService.cs#5-76) run for a few minutes.
+3.  **Check Service Map**:
+    - Open HyperDX -> **Services** -> **Service Map**.
+    - Verify that `clickstack-demo-api` shows a dependency to a `clickhouse-database` (or similar).
+4.  **Check Trace Events**:
+    - Open a trace in HyperDX.
+    - Verify the **Timeline** show events like `db.data_retrieved`.

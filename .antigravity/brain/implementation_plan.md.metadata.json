@@ -1,6 +1,6 @@
 {
   "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary": "Implementation plan to create a reusable NuGet package for ClickStack integration in ASP.NET Core applications.",
-  "updatedAt": "2026-01-31T15:15:44.243888100Z",
-  "version": "3"
+  "summary": "Implementation plan for Phase 4: Full Stack Visibility, focusing on Database Observability, profiling, and RUM.",
+  "updatedAt": "2026-01-31T15:33:42.387140800Z",
+  "version": "7"
 }

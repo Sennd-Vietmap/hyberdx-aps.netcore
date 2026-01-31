@@ -1,0 +1,39 @@
+# Phase 3: Reliability Engineering
+
+This plan outlines the implementation of reliability strategies using ClickStack, focusing on measuring and maintaining service quality.
+
+## User Review Required
+
+> [!NOTE]
+> Reliability engineering is as much about process as it is about tools. We will provide the technical configuration, but you will need to define the business thresholds.
+
+## Proposed Changes
+
+### 1. SLO/SLI Definitions
+
+#### [NEW] [RELIABILITY_GUIDE.md](file:///d:/study/google-antigravity/clickstack-aspnet/RELIABILITY_GUIDE.md)
+A comprehensive guide defining:
+- **SLIs (Indicators)**: Latency (P99 < 500ms), Availability (Success Rate > 99.5%).
+- **SLOs (Objectives)**: The target percentage for these indicators over a rolling window (e.g., 30 days).
+- **Error Budgets**: How to track "allowable" downtime.
+
+### 2. Automated Alerting
+
+#### [MODIFY] [otel-collector-config.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/otel-collector-config.yaml)
+Add a sample `alerting` processor or exporter configuration (if supported by the contrib collector) or guide the user on using the HyperDX UI Alerting engine.
+
+### 3. Log Pattern Recognition
+
+#### [MODIFY] [RELIABILITY_GUIDE.md](file:///d:/study/google-antigravity/clickstack-aspnet/RELIABILITY_GUIDE.md)
+Add instructions on how to use HyperDX's "Log Patterns" feature to identify and group recurring errors automatically.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- None.
+
+### Manual Verification
+1. **Dashboard Review**: Create a sample "Reliability Dashboard" in HyperDX using the SQL queries from the previous phase.
+2. **Alert Test**: Manually trigger an error (via the Traffic Generator) and verify that the defined SLI reflects the degradation immediately.

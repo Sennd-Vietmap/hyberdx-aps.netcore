@@ -49,8 +49,26 @@
     - [x] Search for community and official templates
     - [x] Create `HYPERDX_DASHBOARD_TEMPLATES.md` guide
     - [x] Notify user
+- [x] Implementing Phase 1: Advanced Monitoring
+    - [x] Implement Service Maps (Dependency Tracking)
+    - [x] Create SQL-based Dashboards guide
+    - [x] Implement Custom Span Events for business milestones
+    - [x] Verify Phase 1 completion in ClickStack
 
-- [x] Defining Project Roadmap
-    - [x] Research ClickStack/HyperDX future features
-    - [x] Create `ROADMAP.md` guide
-    - [x] Notify user
+- [x] Implementing Phase 2: Production Readiness
+    - [x] Research Kubernetes deployment patterns for ClickStack
+    - [x] Define Kubernetes manifests (Deployment, Service, Ingress)
+    - [x] Implement API Key rotation and security enhancements
+    - [x] Create Production Setup Guide
+
+- [x] Implementing Phase 3: Reliability Engineering
+    - [x] Define SLOs and SLIs for the ClickStack API
+    - [x] Create RELIABILITY_GUIDE.md for SLIs and Alerts
+    - [x] Implement sample Alerting rules in OTel Collector (if applicable)
+    - [x] Guide for Log Pattern Recognition in HyperDX
+
+- [/] Implementing Phase 4: Full Stack Visibility
+    - [/] Configure ClickHouse Database Observability in OTel Collector
+    - [ ] Create CONTINUOUS_PROFILING_GUIDE.md for .NET
+    - [ ] Create FRONTEND_RUM_GUIDE.md for React/Next.js
+    - [ ] Final project verification and Git commit

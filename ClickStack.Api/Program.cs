@@ -1,4 +1,5 @@
 using ClickHouse.ClickStack.AspNetCore;
+using ClickStack.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,13 +8,14 @@ builder.AddClickStack(options =>
 {
     options.ServiceName = "clickstack-demo-api";
     options.AdditionalSources.Add("ClickStack.TrafficGenerator");
+    options.AdditionalSources.Add("ClickStack.Api.Data");
 });
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IWeatherRepository, WeatherRepository>();
 builder.Services.AddHostedService<ClickStack.Api.Services.TrafficGeneratorService>();
 
 var app = builder.Build();
@@ -30,33 +32,16 @@ app.UseHttpsRedirection();
 // Enable ClickStack Middleware (Account Tracking, etc.)
 app.UseClickStack();
 
-var summaries = new[]
+app.MapGet("/weatherforecast", async (IWeatherRepository repository, ILogger<Program> logger) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", (ILogger<Program> logger) =>
-{
-    logger.LogInformation("Getting weather forecast at {Time}", DateTime.UtcNow);
+    logger.LogInformation("Requesting weather from repository...");
     
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
+    var forecast = await repository.GetForecastsAsync();
 
-    logger.LogInformation("Generated {Count} forecasts", forecast.Length);
+    logger.LogInformation("Returning {Count} forecasts to client", forecast.Count());
     return forecast;
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
