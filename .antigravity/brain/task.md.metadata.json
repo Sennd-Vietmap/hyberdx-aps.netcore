@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_TASK",
+  "summary": "Task list for planning Nginx log collection and conversion to OTel metrics and traces.",
+  "updatedAt": "2026-01-29T12:55:40.330643500Z"
+}

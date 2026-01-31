@@ -1,0 +1,59 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  filelog:
+    include: [ /var/log/nginx/access.plugin.log ]
+    operators:
+      - type: json_parser
+        timestamp:
+          parse_from: attributes.time_iso8601
+          layout: '%Y-%m-%dT%H:%M:%S%z'
+      - type: move
+        from: attributes.status
+        to: attributes["http.response.status_code"]
+      - type: move
+        from: attributes.request_method
+        to: attributes["http.request.method"]
+      - type: move
+        from: attributes.request_uri
+        to: attributes["url.path"]
+      - type: move
+        from: attributes.remote_addr
+        to: attributes["client.address"]
+      - type: move
+        from: attributes.body_bytes_sent
+        to: attributes["http.response.body.size"]
+
+processors:
+  batch:
+  
+  # Map Nginx logs and add service name
+  transform:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["service.name"], "nginx-proxy")
+            where attributes["service.name"] == nil
+
+exporters:
+  otlphttp:
+    endpoint: "http://clickstack-hyperdx:4318"
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp, filelog]
+      processors: [batch, transform]
+      exporters: [otlphttp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp]

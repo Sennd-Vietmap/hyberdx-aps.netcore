@@ -1,0 +1,54 @@
+# Nginx Log Collection and OTel Signal Transformation
+
+This plan outlines how to collect Nginx access logs, parse them into a structured format, and use an OpenTelemetry Collector to generate metrics and traces from these logs.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This approach uses an **OpenTelemetry Collector (Contrib)** sidecar to tail log files. We will need to update [docker-compose.yml](file:///d:/study/google-antigravity/clickstack-aspnet/docker-compose.yml) to include this new service and mount a shared volume for logs between Nginx and the Collector.
+
+## Proposed Changes
+
+### Nginx Configuration
+
+#### [MODIFY] [nginx.conf](file:///d:/study/google-antigravity/clickstack-aspnet/nginx/nginx.conf)
+- Define a new `log_format` named `otel_json` that outputs JSON structured logs.
+- Update the `access_log` directive to use this format and output to a file that the collector can reach (e.g., `/var/log/nginx/access.plugin.log`).
+- Include fields: `time_iso8601`, `remote_addr`, `request_method`, `request_uri`, `status`, `body_bytes_sent`, `request_time`, and `http_user_agent`.
+
+### OpenTelemetry Collector
+
+#### [NEW] [otel-collector-config.yaml](file:///d:/study/google-antigravity/clickstack-aspnet/otel-collector-config.yaml)
+- **Receiver**: `filelog` to tail `/var/log/nginx/access.plugin.log`.
+- **Processors**:
+    - `json_parser`: To extract fields from the JSON log.
+    - `transform`: To map Nginx fields to OTel semantic conventions (e.g., `status` -> `http.response.status_code`).
+    - `spanmetrics`: (Optional if we want standard metrics) OR `transform` to generate custom metrics.
+- **Exporters**: `otlp` pointing to `clickstack-observability:4317`.
+- **Service Pipelines**:
+    - `logs`: `filelog` -> `json_parser` -> `otlp`.
+    - `metrics`: (TBD - how to best extract from logs in this specific version).
+    - `traces`: (TBD - using `span` processor to create spans from logs).
+
+### Infrastructure
+
+#### [MODIFY] [docker-compose.yml](file:///d:/study/google-antigravity/clickstack-aspnet/docker-compose.yml)
+- Add `otel-collector` service using `otel/opentelemetry-collector-contrib:latest`.
+- Create a shared volume `nginx_logs` and mount it to both `nginx-proxy` and `otel-collector`.
+- Pass environment variables if needed (e.g., `OTEL_EXPORTER_OTLP_ENDPOINT`).
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- No automated tests currently exist for infrastructure changes. I will rely on manual verification via the HyperDX UI.
+
+### Manual Verification
+1.  **Restart Services**: Run `docker-compose up -d --build`.
+2.  **Generate Traffic**: Access the Nginx proxy (port 8686) multiple times.
+3.  **Check Collector Logs**: `docker logs clickstack-otel-collector` to ensure it's successfully reading and parsing logs.
+4.  **HyperDX UI**:
+    - Verify logs appear in the **Logs** tab with correct attributes.
+    - Verify metrics (e.g., request count) appear in the **Metrics** tab.
+    - Verify spans (traces) appear in the **Traces** tab representing Nginx requests.

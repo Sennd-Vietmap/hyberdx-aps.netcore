@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Walkthrough of the Nginx log collection and OTel integration implementation. Highlights JSON logging, OTel Collector sidecar setup, and log-to-metric transformation.",
+  "updatedAt": "2026-01-29T12:59:05.056803400Z"
+}

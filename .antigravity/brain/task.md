@@ -1,0 +1,36 @@
+# Nginx Log Collection and OTel Integration
+
+- [x] Researching current infrastructure
+    - [x] Examine `docker-compose.yml`
+    - [x] Search for Nginx configuration files
+    - [x] Search for OpenTelemetry Collector configuration
+- [x] Researching HyperDX integration
+- [x] Brainstorming implementation plan
+- [x] Creating implementation plan artifact
+- [x] Verifying plan with user
+- [x] Implementing Nginx JSON logging
+- [x] Creating OTel Collector configuration
+- [x] Updating `docker-compose.yml`
+- [x] Verifying signal transformation in HyperDX
+
+- [x] Routing ASP.NET API Telemetry through OTel Collector
+    - [x] Research current API instrumentation
+    - [x] Add OTLP receiver to `otel-collector-config.yaml`
+    - [x] Update Collector pipelines for Traces, Metrics, and Logs
+    - [x] Update Docker Compose port mappings
+    - [x] Verify signal flow in HyperDX
+
+- [x] Creating ClickHouse Clustering Guide
+    - [x] Research ClickHouse clustering requirements (Keeper, Shards, Replicas)
+    - [x] Draft step-by-step setup guide
+    - [x] Review and refine documentation
+
+- [x] Explaining Infrastructure Configuration
+    - [x] Review `docker-compose.yml` and `otel-collector-config.yaml`
+    - [x] Create `OBSERVABILITY_SETUP_GUIDE.md` for beginners
+    - [x] Notify user
+
+- [x] Researching HyperDX Dashboard Templates
+    - [x] Search for community and official templates
+    - [x] Create `HYPERDX_DASHBOARD_TEMPLATES.md` guide
+    - [x] Notify user
